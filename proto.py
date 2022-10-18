@@ -12,6 +12,20 @@ face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades
                                      + 'haarcascade_frontalface_default.xml')
 video_capture = cv2.VideoCapture(0) 
 
+def find_camera_process():
+    from subprocess import PIPE, Popen
+    def command(command):
+            process = Popen(
+            args=command,
+            stdout=PIPE,
+            shell=True)
+            return process.communicate()[0]
+    process = command('fuser /dev/')
+    if process:
+        killing_process = str(process).split(' ')[-1]
+        command(f'kill -9 {killing_process}')
+
+
 def gen_frames():  # generate frame by frame from camera
     while True:
         # Capture frame-by-frame
@@ -52,3 +66,4 @@ def video_feed():
 
 if __name__ == '__main__':
     uvicorn.run(app, host='127.0.0.1', port=8000, debug=True)
+    find_and_kill_camera_process()
