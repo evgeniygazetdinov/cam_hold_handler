@@ -5,14 +5,53 @@ from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import StreamingResponse
 
+
+#  ====== 
+
+from fastapi import FastAPI, Depends
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 app = FastAPI()
+
+engine = create_engine("sqlite:////~/Documents/ppython/my_db.db")
+Session = sessionmaker(bind=engine)
+def get_db():
+    return Session()
+
+
+from fastapi import FastAPI, UploadFile, File, Form
+from fastapi.middleware.cors import CORSMiddleware
+from databases import Database
+
+database = Database("sqlite:///test.db")
+
+
+@app.on_event("startup")
+async def database_connect():
+    await database.connect()
+
+
+@app.on_event("shutdown")
+async def database_disconnect():
+    await database.disconnect()
+
+
+@app.post("/test")
+async def fetch_data(id: int):
+    query = "SELECT * FROM tablename WHERE ID={}".format(str(id))
+    results = await database.fetch_all(query=query)
+
+
+# ======
+
 camera = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 templates = Jinja2Templates(directory="templates")
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades 
                                      + 'haarcascade_frontalface_default.xml')
 video_capture = cv2.VideoCapture(0) 
 
-def find_camera_process():
+def find_and_kill_camera_process():
     from subprocess import PIPE, Popen
     def command(command):
             process = Popen(
@@ -59,6 +98,14 @@ def gen_frames():  # generate frame by frame from camera
 @app.get('/')
 def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
+
+
+@app.get("/my_db")
+def an_endpoint_using_sql(db = Depends(get_db)):
+    # ...
+    # do some SQLAlchemy
+    # ...
+    return {"msg": "an exceptionally successful operation!"}
 
 @app.get('/video_feed')
 def video_feed():
