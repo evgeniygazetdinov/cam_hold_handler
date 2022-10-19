@@ -12,7 +12,7 @@ from fastapi import FastAPI, Depends
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-app = FastAPI()
+
 
 engine = create_engine("sqlite:////~/Documents/ppython/my_db.db")
 Session = sessionmaker(bind=engine)
