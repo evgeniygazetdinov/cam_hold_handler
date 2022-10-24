@@ -13,6 +13,7 @@ from fastapi import FastAPI, Depends
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+app = FastAPI()
 
 engine = create_engine("sqlite:////~/Documents/ppython/my_db.db")
 Session = sessionmaker(bind=engine)
@@ -49,7 +50,7 @@ camera = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 templates = Jinja2Templates(directory="templates")
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades 
                                      + 'haarcascade_frontalface_default.xml')
-video_capture = cv2.VideoCapture(0) 
+video_capture = cv2.VideoCapture('rtsp://admin:Qwerty12345678@192.168.1.104') 
 
 def find_and_kill_camera_process():
     from subprocess import PIPE, Popen

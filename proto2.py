@@ -15,6 +15,7 @@ app = FastAPI()
 # database
 database = Database(DATABASE_URL)
 
+
 metadata = sqlalchemy.MetaData()
 
 api_flow_json = sqlalchemy.Table(
@@ -65,7 +66,6 @@ def home():
 async def seed():
     query = api_flow_json.insert().values(
         customer_name="ABC",
-        # entities='["ABC","DEF","GHI"]',
     )
     record_id = await database.execute(query)
     return {"id": record_id}
@@ -73,9 +73,9 @@ async def seed():
 
 @app.get("/get", response_model=List[MyData])
 async def get_data():
-    return await database.fetch_all("SELECT id FROM my_data")
-    
-
+    query = api_flow_json.select()
+    record_id = await database.execute(query)
+    return record_id
 
 if __name__ == '__main__':
     uvicorn.run(app, host='127.0.0.1', port=8008, debug=True)
