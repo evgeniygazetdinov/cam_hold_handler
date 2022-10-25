@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
-from . import models, schemas
+import models, schemas
 
 
 def get_user_by_email(db: Session, customer_name: str):
-    return db.query(models.User).filter(models.User.customer_name == customer_name).first()
+    return db.query(models.api_flow_json).filter(models.api_flow_json.columns.customer_name == str(customer_name)).first()
