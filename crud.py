@@ -1,7 +1,18 @@
-from sqlalchemy.orm import Session
+from book_manager import Book
+from db import DB as db
 
-import models, schemas
 
+def add_book(title):
+        book = Book(title=title)
+        db.session.add(book)
+        db.session.commit()
 
-def get_user_by_email(db: Session, customer_name: str):
-    return db.query(models.api_flow_json).filter(models.api_flow_json.columns.customer_name == str(customer_name)).first()
+def one_book_by_title(title):
+    pass
+
+def create():
+    db.create_all()
+    db.commit()
+
+def all_books():
+    return Book.query.all()
