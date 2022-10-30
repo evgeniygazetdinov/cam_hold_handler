@@ -1,1 +1,1 @@
-eval 'source env/bin/activate && uvicorn main:app --reload';
+eval 'source env/bin/activate python3 main2.py';
