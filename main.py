@@ -3,7 +3,7 @@ from models import db,EmployeeModel
 import cv2
 
 app = Flask(__name__)
-adres = 'rtsp://192.168.1.103/live/ch00_0'
+addres = 'rtsp://192.168.1.103/live/ch00_0'
 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
@@ -18,7 +18,7 @@ def create_table():
 def gen_frames():  # generate frame by frame from camera
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades 
                                      + 'haarcascade_frontalface_default.xml')
-    video_capture = cv2.VideoCapture(adres) 
+    video_capture = cv2.VideoCapture(addres) 
     while True:
         # Capture frame-by-frame
         success, frame = video_capture.read()  # read the camera frame
@@ -49,7 +49,7 @@ def gen_frames():  # generate frame by frame from camera
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
 
 
-@app.route('/video_feed')
+@app.route('/')
 def video_feed():
     #Video streaming route. Put this in the src attribute of an img tag
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
