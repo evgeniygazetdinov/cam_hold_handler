@@ -36,25 +36,21 @@ class PhotoModel(db.Model):
     персона из фото
     """
 
-    __tablename__ = "table"
 
     id = db.Column(db.Integer, primary_key=True)
     place_for_store = db.Column(db.String())
-    date = db.Column(db.Datetime(), default=datetime.datetime.utcnow)
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, place_for_store):
+        self.place_for_store = place_for_store
 
     def __repr__(self) -> str:
-        return f"{self.name}"
+        return f"{self.place_for_store}"
 
 
 class DectedPersonModel(db.Model):
     """
     персона из фото
     """
-
-    __tablename__ = "table"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String())
