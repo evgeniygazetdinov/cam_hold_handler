@@ -4,7 +4,14 @@
         <div class="container">
             <h3> Live Streaming </h3>
             <img src="{{ url_for('video_feed') }}" width="50%">
-            <img src="{{ url_for('video_feed') }}" width="50%">
         </div>
+
+        <form method="POST" action="/" enctype="multipart/form-data">
+            <p>{{count}}</p>
+
+            <!-- Submit -->        
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
     </body>
 </html>

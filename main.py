@@ -9,6 +9,18 @@ addres = 'rtsp://192.168.1.103/live/ch00_0'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
+count = 1
+
+def render_picture(data):
+
+    render_pic = base64.b64encode(data).decode('ascii') 
+    return render_pic
+
+
+@app.route('/upload', methods=['POST'])
+def upload():
+    count=+1
+    return render_template('index.html', count=0)  
 
 
 @app.before_first_request
@@ -18,7 +30,8 @@ def create_table():
 def gen_frames():  # generate frame by frame from camera
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades 
                                      + 'haarcascade_frontalface_default.xml')
-    video_capture = cv2.VideoCapture(addres) 
+    video_capture = cv2.VideoCapture(0)
+    # cv2.VideoCapture(addres) 
     while True:
         # Capture frame-by-frame
         success, frame = video_capture.read()  # read the camera frame
@@ -47,12 +60,15 @@ def gen_frames():  # generate frame by frame from camera
             frame = buffer.tobytes()
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
-
-
-@app.route('/')
+@app.route('/1')
 def video_feed():
     #Video streaming route. Put this in the src attribute of an img tag
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route('/')
+def main():
+    #Video streaming route. Put this in the src attribute of an img tag
+    return render_template('index.html', count=0)   
 
 @app.route('/data/create' , methods = ['GET','POST'])
 def create():
