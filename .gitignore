@@ -1,3 +1,6 @@
 env/
 __pycache__
 *.db
+corrector/
+instance/
+real-time-object-detection/env/
