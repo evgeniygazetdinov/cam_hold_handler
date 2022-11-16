@@ -54,7 +54,6 @@ def gen_frames():  # generate frame by frame from camera
                             2) # thickness in px
             ret, buffer = cv2.imencode('.jpg', frame)
             frame = buffer.tobytes()
-            print(frame)
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
 @app.route('/1')
@@ -62,7 +61,7 @@ def video_feed():
     #Video streaming route. Put this in the src attribute of an img tag
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-@app.route('/upload/<bytes:byte_foto>', methods=['POST'])
+@app.route('/upload/<str:byte_foto>', methods=['POST'])
 def make_photo(byte_photo):
     f = open('1.jpg', 'wb')
     f.write(byte_photo)
