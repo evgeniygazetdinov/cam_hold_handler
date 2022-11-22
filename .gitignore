@@ -4,3 +4,5 @@ __pycache__
 corrector/
 instance/
 real-time-object-detection/env/
+*.avi
+shots/
