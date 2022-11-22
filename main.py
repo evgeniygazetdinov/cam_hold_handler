@@ -16,68 +16,79 @@ from const import (
 
 app = make_flask_app()
 db.init_app(app)
-global capture,rec_frame, grey, switch, neg, face, rec, out 
-capture=0
-grey=0
-neg=0
-face=0
-switch=1
-rec=0
+global capture, rec_frame, grey, switch, neg, face, rec, out
+capture = 0
+grey = 0
+neg = 0
+face = 0
+switch = 1
+rec = 0
 try:
-    os.mkdir('./shots')
+    os.mkdir("./shots")
 except OSError as error:
     pass
 
 
-@app.route('/requests',methods=['POST','GET'])
+@app.route("/requests", methods=["POST", "GET"])
 def tasks():
-    global switch,camera
-    if request.method == 'POST':
-        if request.form.get('click') == 'Capture':
+    global switch, camera
+    if request.method == "POST":
+        if request.form.get("click") == "Capture":
             global capture
-            capture=1
-        elif  request.form.get('grey') == 'Grey':
+            capture = 1
+        elif request.form.get("grey") == "Grey":
             global grey
-            grey=not grey
-        elif  request.form.get('neg') == 'Negative':
+            grey = not grey
+        elif request.form.get("neg") == "Negative":
             global neg
-            neg=not neg
-        elif  request.form.get('face') == 'Face Only':
+            neg = not neg
+        elif request.form.get("face") == "Face Only":
             global face
-            face=not face 
-            if(face):
-                time.sleep(4)   
-        elif  request.form.get('stop') == 'Stop/Start':
-            
-            if(switch==1):
-                switch=0
+            face = not face
+            if face:
+                time.sleep(4)
+        elif request.form.get("stop") == "Stop/Start":
+
+            if switch == 1:
+                switch = 0
                 camera.release()
                 cv2.destroyAllWindows()
-                
+
             else:
                 camera = cv2.VideoCapture(0)
-                switch=1
-        elif  request.form.get('rec') == 'Start/Stop Recording':
+                switch = 1
+        elif request.form.get("rec") == "Start/Stop Recording":
             global rec, out
-            rec= not rec
-            if(rec):
-                now=datetime.datetime.now() 
-                fourcc = cv2.VideoWriter_fourcc(*'XVID')
-                out = cv2.VideoWriter('vid_{}.avi'.format(str(now).replace(":",'')), fourcc, 20.0, (640, 480))
-                #Start new thread for recording the video
-                thread = Thread(target = record, args=[out,])
+            rec = not rec
+            if rec:
+                now = datetime.datetime.now()
+                fourcc = cv2.VideoWriter_fourcc(*"XVID")
+                out = cv2.VideoWriter(
+                    "vid_{}.avi".format(str(now).replace(":", "")),
+                    fourcc,
+                    20.0,
+                    (640, 480),
+                )
+                # Start new thread for recording the video
+                thread = Thread(
+                    target=record,
+                    args=[
+                        out,
+                    ],
+                )
                 thread.start()
-            elif(rec==False):
+            elif rec == False:
                 out.release()
-                          
-                 
-    elif request.method=='GET':
-        return render_template('index2.html')
-    return render_template('index2.html')
+
+    elif request.method == "GET":
+        return render_template("index2.html")
+    return render_template("index2.html")
+
 
 @app.before_first_request
 def create_table():
     db.create_all()
+
 
 # def record(out):
 #     global rec_frame
@@ -85,13 +96,14 @@ def create_table():
 #         time.sleep(0.05)
 #         out.write(rec_frame)
 
+
 def gen_frames():  # generate frame by frame from camera
     face_cascade = cv2.CascadeClassifier(
         cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
     )
     video_capture = cv2.VideoCapture(0)
     # cv2.VideoCapture(addres)
-    global out, capture,rec_frame
+    global out, capture, rec_frame
     while True:
         # Capture frame-by-frame
         success, frame = video_capture.read()  # read the camera frame
@@ -107,11 +119,13 @@ def gen_frames():  # generate frame by frame from camera
                 minSize=(100, 100),
                 flags=cv2.CASCADE_SCALE_IMAGE,
             )
-            if(capture):
-                print('here')
-                capture=0
+            if capture:
+                print("here")
+                capture = 0
                 now = datetime.datetime.now()
-                p = os.path.sep.join(['shots', "shot_{}.png".format(str(now).replace(":",''))])
+                p = os.path.sep.join(
+                    ["shots", "shot_{}.png".format(str(now).replace(":", ""))]
+                )
                 cv2.imwrite(p, frame)
             # if(rec):
             #     rec_frame=frame
