@@ -36,7 +36,6 @@ class PhotoModel(db.Model):
     персона из фото
     """
 
-
     id = db.Column(db.Integer, primary_key=True)
     place_for_store = db.Column(db.String())
 
