@@ -6,6 +6,6 @@
 --------------------
 | work to do     | 
 | ------------- |
-|make photo |without collisions
+|make photo without collisions
 | store photos to db|
 |learn camera undestand who on video |
