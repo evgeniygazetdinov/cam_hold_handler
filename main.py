@@ -90,11 +90,11 @@ def create_table():
     db.create_all()
 
 
-# def record(out):
-#     global rec_frame
-#     while(rec):
-#         time.sleep(0.05)
-#         out.write(rec_frame)
+def record(out):
+    global rec_frame
+    while(rec):
+        time.sleep(0.05)
+        out.write(rec_frame)
 
 
 def gen_frames():  # generate frame by frame from camera
@@ -127,10 +127,10 @@ def gen_frames():  # generate frame by frame from camera
                     ["shots", "shot_{}.png".format(str(now).replace(":", ""))]
                 )
                 cv2.imwrite(p, frame)
-            # if(rec):
-            #     rec_frame=frame
-            #     frame= cv2.putText(cv2.flip(frame,1),"Recording...", (0,25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255),4)
-            #     frame=cv2.flip(frame,1)
+            if(rec):
+                rec_frame=frame
+                frame= cv2.putText(cv2.flip(frame,1),"Recording...", (0,25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255),4)
+                frame=cv2.flip(frame,1)
 
             for (x, y, w, h) in faces:
                 # for each face on the image detected by OpenCV
