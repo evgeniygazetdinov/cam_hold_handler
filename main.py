@@ -6,15 +6,11 @@ from threading import Thread
 from flask import render_template, request, redirect, Response
 from models import db, EmployeeModel
 import cv2
-from werkzeug.utils import secure_filename
 from const import (
-    make_flask_app,
-    ALLOWED_EXTENSIONS,
-    PATH_TO_YOUR_FOLDER,
-    CAMERA_ADDRESS,
+    make_camera_flask_app,
 )
 
-app = make_flask_app()
+app = make_camera_flask_app()
 db.init_app(app)
 global capture, rec_frame, grey, switch, neg, face, rec, out
 capture = 0
@@ -23,10 +19,6 @@ neg = 0
 face = 0
 switch = 1
 rec = 0
-try:
-    os.mkdir("./shots")
-except OSError as error:
-    pass
 
 
 @app.route("/requests", methods=["POST", "GET"])
@@ -58,7 +50,7 @@ def tasks():
                 camera = cv2.VideoCapture(0)
                 switch = 1
         elif request.form.get("rec") == "Start/Stop Recording":
-            global rec, out
+            global rec, out, rec_frame
             rec = not rec
             if rec:
                 now = datetime.datetime.now()
