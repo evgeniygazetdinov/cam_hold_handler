@@ -4,7 +4,7 @@ import time
 from threading import Thread
 
 from flask import render_template, request, redirect, Response
-from models import db, EmployeeModel
+from models import db, EmployeeModel, PhotoModel
 import cv2
 from const import (
     make_camera_flask_app,
@@ -12,21 +12,28 @@ from const import (
 
 app = make_camera_flask_app()
 db.init_app(app)
-global capture, rec_frame, grey, switch, neg, face, rec, out
+global capture, rec_frame, grey, switch, neg, face, rec, out, picture_name
 capture = 0
 grey = 0
 neg = 0
 face = 0
 switch = 1
 rec = 0
+def store_photo(photo_path):
+    my_photo = PhotoModel(
+    store_location=photo_path, name = datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+    )
+    db.session.add(my_photo)
+    db.session.commit()
 
 
 @app.route("/requests", methods=["POST", "GET"])
 def tasks():
-    global switch, camera
+    global switch, camera, picture_name
+    # TODO refactor
     if request.method == "POST":
         if request.form.get("click") == "Capture":
-            global capture
+            global capture, picture_name
             capture = 1
         elif request.form.get("grey") == "Grey":
             global grey
@@ -95,7 +102,7 @@ def gen_frames():  # generate frame by frame from camera
     )
     video_capture = cv2.VideoCapture(0)
     # cv2.VideoCapture(addres)
-    global out, capture, rec_frame
+    global out, capture, rec_frame, picture_name
     while True:
         # Capture frame-by-frame
         success, frame = video_capture.read()  # read the camera frame
@@ -112,12 +119,12 @@ def gen_frames():  # generate frame by frame from camera
                 flags=cv2.CASCADE_SCALE_IMAGE,
             )
             if capture:
-                print("here")
                 capture = 0
                 now = datetime.datetime.now()
                 p = os.path.sep.join(
                     ["shots", "shot_{}.png".format(str(now).replace(":", ""))]
                 )
+                picture_name = p
                 cv2.imwrite(p, frame)
             if rec:
                 rec_frame = frame

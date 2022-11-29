@@ -33,17 +33,17 @@ class EmployeeModel(db.Model):
 
 class PhotoModel(db.Model):
     """
-    персона из фото
+    сохранение фото
     """
 
-    id = db.Column(db.Integer, primary_key=True)
-    place_for_store = db.Column(db.String())
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String())
+    store_location = db.Column(db.String())
 
-    def __init__(self, place_for_store):
-        self.place_for_store = place_for_store
 
-    def __repr__(self) -> str:
-        return f"{self.place_for_store}"
+    def __init__(self, name, store_location):
+        self.name = name
+        self.store_location = store_location
 
 
 class DectedPersonModel(db.Model):
@@ -53,10 +53,14 @@ class DectedPersonModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String())
-    photo_where_located = db.Column(db.Integer, db.ForeignKey(PhotoModel.id))
+    #store_location = db.Column(db.Integer, db.ForeignKey(PhotoModel.id))
 
     def __init__(self, name):
         self.name = name
 
     def __repr__(self) -> str:
         return f"{self.name}"
+
+class MyPicture(db.Model):
+   id = db.Column(db.Integer, primary_key=True)
+   name = db.Column(db.String()) 
