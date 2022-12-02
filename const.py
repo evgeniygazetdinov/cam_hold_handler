@@ -13,7 +13,9 @@ def add_camera_folder():
 
 def make_camera_flask_app():
     app = Flask(__name__)
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
+    project_dir = os.path.dirname(os.path.abspath(__file__))
+    database_file = "sqlite:////{}".format(os.path.join(project_dir, "my.db"))
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_file
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     add_camera_folder()
     return app
