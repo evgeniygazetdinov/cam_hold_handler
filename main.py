@@ -4,6 +4,7 @@ import time
 from threading import Thread
 
 from flask import render_template, request, redirect, Response
+from flask_migrate import Migrate
 from models import db, EmployeeModel, PhotoModel
 import cv2
 from const import (
@@ -12,6 +13,7 @@ from const import (
 
 app = make_camera_flask_app()
 db.init_app(app)
+migrate = Migrate(app, db)
 global capture, rec_frame, grey, switch, neg, face, rec, out, picture_name
 capture = 0
 grey = 0
@@ -19,9 +21,17 @@ neg = 0
 face = 0
 switch = 1
 rec = 0
-def store_photo(photo_path):
+
+
+
+
+def store_photo():
+    now = datetime.datetime.now()
+    p = os.path.sep.join(
+        ["shots", "shot_{}.png".format(str(now).replace(":", ""))]
+    )
     my_photo = PhotoModel(
-    store_location=photo_path, name = datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+    store_location=p, name = datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
     )
     db.session.add(my_photo)
     db.session.commit()
@@ -35,6 +45,7 @@ def tasks():
         if request.form.get("click") == "Capture":
             global capture, picture_name
             capture = 1
+            store_photo()
         elif request.form.get("grey") == "Grey":
             global grey
             grey = not grey
@@ -87,6 +98,7 @@ def tasks():
 @app.before_first_request
 def create_table():
     db.create_all()
+    db.session.commit()
 
 
 def record(out):
@@ -119,7 +131,6 @@ def gen_frames():  # generate frame by frame from camera
                 flags=cv2.CASCADE_SCALE_IMAGE,
             )
             if capture:
-                capture = 0
                 now = datetime.datetime.now()
                 p = os.path.sep.join(
                     ["shots", "shot_{}.png".format(str(now).replace(":", ""))]
@@ -236,4 +247,4 @@ def delete(id):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5001)
+    app.run(host="0.0.0.0", port=5002)

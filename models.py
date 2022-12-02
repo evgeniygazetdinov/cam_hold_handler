@@ -1,11 +1,25 @@
 """
 class for models
 """
-import datetime
 from flask_sqlalchemy import SQLAlchemy
 
 
 db = SQLAlchemy()
+
+
+class PhotoModel(db.Model):
+    """
+    сохранение фото
+    """
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String())
+    store_location = db.Column(db.String())
+
+
+    def __init__(self, name, store_location):
+        self.name = name
+        self.store_location = store_location
 
 
 class EmployeeModel(db.Model):
@@ -31,19 +45,7 @@ class EmployeeModel(db.Model):
         return f"{self.name}:{self.employee_id}"
 
 
-class PhotoModel(db.Model):
-    """
-    сохранение фото
-    """
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String())
-    store_location = db.Column(db.String())
-
-
-    def __init__(self, name, store_location):
-        self.name = name
-        self.store_location = store_location
 
 
 class DectedPersonModel(db.Model):
