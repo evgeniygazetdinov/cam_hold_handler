@@ -22,7 +22,9 @@ face = 0
 switch = 1
 rec = 0
 
-
+def make_list_task_before_execution():
+    """
+    """
 
 
 def store_photo():
@@ -37,7 +39,7 @@ def store_photo():
     db.session.commit()
 
 
-@app.route("/requests", methods=["POST", "GET"])
+@app.route("/", methods=["POST", "GET"])
 def tasks():
     global switch, camera, picture_name
     # TODO refactor
@@ -91,8 +93,8 @@ def tasks():
                 out.release()
 
     elif request.method == "GET":
-        return render_template("index2.html")
-    return render_template("index2.html")
+        return render_template("index.html")
+    return render_template("index.html")
 
 
 @app.before_first_request
@@ -172,11 +174,6 @@ def video_feed():
     # Video streaming route. Put this in the src attribute of an img tag
     return Response(gen_frames(), mimetype="multipart/x-mixed-replace; boundary=frame")
 
-
-@app.route("/")
-def main():
-    # Video streaming route. Put this in the src attribute of an img tag
-    return render_template("index.html", count=0)
 
 
 @app.route("/data/create", methods=["GET", "POST"])
