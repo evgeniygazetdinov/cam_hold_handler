@@ -16,7 +16,6 @@ class PhotoModel(db.Model):
     name = db.Column(db.String())
     store_location = db.Column(db.String())
 
-
     def __init__(self, name, store_location):
         self.name = name
         self.store_location = store_location
@@ -45,9 +44,6 @@ class EmployeeModel(db.Model):
         return f"{self.name}:{self.employee_id}"
 
 
-
-
-
 class DectedPersonModel(db.Model):
     """
     персона из фото
@@ -55,7 +51,7 @@ class DectedPersonModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String())
-    #store_location = db.Column(db.Integer, db.ForeignKey(PhotoModel.id))
+    # store_location = db.Column(db.Integer, db.ForeignKey(PhotoModel.id))
 
     def __init__(self, name):
         self.name = name
@@ -63,6 +59,7 @@ class DectedPersonModel(db.Model):
     def __repr__(self) -> str:
         return f"{self.name}"
 
+
 class MyPicture(db.Model):
-   id = db.Column(db.Integer, primary_key=True)
-   name = db.Column(db.String()) 
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String())
