@@ -3,7 +3,7 @@ import datetime
 import time
 from threading import Thread
 
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, Response
 from flask_migrate import Migrate
 from models import db, EmployeeModel, PhotoModel
 import cv2
@@ -22,18 +22,16 @@ face = 0
 switch = 1
 rec = 0
 
+
 def make_list_task_before_execution():
-    """
-    """
+    """ """
 
 
 def store_photo():
     now = datetime.datetime.now()
-    p = os.path.sep.join(
-        ["shots", "shot_{}.png".format(str(now).replace(":", ""))]
-    )
+    p = os.path.sep.join(["shots", "shot_{}.png".format(str(now).replace(":", ""))])
     my_photo = PhotoModel(
-    store_location=p, name = datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+        store_location=p, name=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
     )
     db.session.add(my_photo)
     db.session.commit()
@@ -60,7 +58,7 @@ def tasks():
             if face:
                 time.sleep(4)
         elif request.form.get("all_photo") == "all photo":
-            return redirect(url_for('photo_list'))
+            return redirect(url_for("photo_list"))
         elif request.form.get("stop") == "Stop/Start":
             if switch == 1:
                 switch = 0
@@ -169,6 +167,11 @@ def gen_frames():  # generate frame by frame from camera
             )  # concat frame one by one and show result
 
 
+@app.route("/1")
+def video_feed():
+    # Video streaming route. Put this in the src attribute of an img tag
+    return Response(gen_frames(), mimetype="multipart/x-mixed-replace; boundary=frame")
+
 
 @app.route("/data/create", methods=["GET", "POST"])
 def create():
@@ -192,7 +195,7 @@ def create():
 def RetrieveList():
     all_photos = PhotoModel.query.all()
     for photos in all_photos:
-        photos.store_location=os.getcwd()+ '/' +photos.store_location 
+        photos.store_location = os.getcwd() + "/" + photos.store_location
     return render_template("all_photo.html", all_photos=all_photos)
 
 
