@@ -57,7 +57,7 @@ def tasks():
             face = not face
             if face:
                 time.sleep(4)
-        elif request.form.get("all_photo") == "all photo":
+        elif request.form.get("all_photos") == "all photos":
             return redirect(url_for("photo_list"))
         elif request.form.get("stop") == "Stop/Start":
             if switch == 1:
@@ -165,7 +165,7 @@ def gen_frames():  # generate frame by frame from camera
             yield (
                 b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame + b"\r\n"
             )  # concat frame one by one and show result
-
+            
 
 @app.route("/1")
 def video_feed():
@@ -192,13 +192,21 @@ def create():
 
 
 @app.route("/photo_list")
-def RetrieveList():
+def photo_list():
     all_photos = PhotoModel.query.all()
     for photos in all_photos:
         photos.store_location = os.getcwd() + "/" + photos.store_location
     return render_template("all_photo.html", all_photos=all_photos)
 
-
+@app.route("/photo_delete/<int:id>")
+def remove_photo_by_id(id):
+    employee = PhotoModel.query.filter_by(id=id).first()
+    if employee:
+        os.system(f'rm {employee.store_location}')
+        db.session.delete(employee)
+        db.session.commit()
+    return redirect("/photo_list")
+    
 @app.route("/data/<int:id>")
 def RetrieveEmployee(id):
     employee = EmployeeModel.query.filter_by(employee_id=id).first()
