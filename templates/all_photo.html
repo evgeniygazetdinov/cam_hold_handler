@@ -1,7 +1,10 @@
+<a href="{{ url_for('tasks') }}">на главную</a>
 {% for photo in all_photos %}
 <h3>{{photo.name}}</h3>
-<img src="{{photo.store_location}}">
-<button></button>
-<button> </button>
+
+<img src="{{photo.store_location}}"></img>
+
+    <a href="{{url_for('remove_photo_by_id', id=photo.id)}}">удалить</a>
+
 <hr>
 {% endfor %}
