@@ -10,7 +10,9 @@ import cv2
 from const import (
     make_camera_flask_app,
 )
+from writer import RefreshSaver
 
+refresh = RefreshSaver()
 app = make_camera_flask_app()
 db.init_app(app)
 migrate = Migrate(app, db)
@@ -39,13 +41,15 @@ def store_photo():
 
 @app.route("/", methods=["POST", "GET"])
 def tasks():
-    global switch, camera, picture_name
-    # TODO refactor
+    global switch, camera
     if request.method == "POST":
         if request.form.get("click") == "Capture":
-            global capture, picture_name
-            capture = 1
-            store_photo()
+            # TODO fix refresh collision
+            if not refresh.photo_is_already_exist():
+                global capture
+                capture = 1
+                store_photo()
+                refresh.set_position()
         elif request.form.get("grey") == "Grey":
             global grey
             grey = not grey
@@ -137,6 +141,7 @@ def gen_frames():  # generate frame by frame from camera
                 )
                 picture_name = p
                 cv2.imwrite(p, frame)
+                capture = 0
             if rec:
                 rec_frame = frame
                 frame = cv2.putText(
@@ -160,12 +165,12 @@ def gen_frames():  # generate frame by frame from camera
                     (255, 0, 0),  # color in BGR
                     2,
                 )  # thickness in px
-            ret, buffer = cv2.imencode(".jpg", frame)
-            frame = buffer.tobytes()
-            yield (
-                b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame + b"\r\n"
-            )  # concat frame one by one and show result
-            
+                ret, buffer = cv2.imencode(".jpg", frame)
+                frame = buffer.tobytes()
+                yield (
+                    b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame + b"\r\n"
+                )  # concat frame one by one and show result
+
 
 @app.route("/1")
 def video_feed():
@@ -198,15 +203,17 @@ def photo_list():
         photos.store_location = os.getcwd() + "/" + photos.store_location
     return render_template("all_photo.html", all_photos=all_photos)
 
+
 @app.route("/photo_delete/<int:id>")
 def remove_photo_by_id(id):
     employee = PhotoModel.query.filter_by(id=id).first()
     if employee:
-        os.system(f'rm {employee.store_location}')
+        os.system(f"rm {employee.store_location}")
         db.session.delete(employee)
         db.session.commit()
     return redirect("/photo_list")
-    
+
+
 @app.route("/data/<int:id>")
 def RetrieveEmployee(id):
     employee = EmployeeModel.query.filter_by(employee_id=id).first()
