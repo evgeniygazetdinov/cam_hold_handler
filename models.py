@@ -60,6 +60,7 @@ class DectedPersonModel(db.Model):
         return f"{self.name}"
 
 
-class MyPicture(db.Model):
+class Picture_for_store(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String())
+    store_location = db.Column(db.String())
