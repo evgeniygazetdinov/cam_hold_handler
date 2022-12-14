@@ -31,9 +31,9 @@ def make_list_task_before_execution():
 
 def store_photo():
     now = datetime.datetime.now()
-    p = os.path.sep.join(["shots", "shot_{}.png".format(str(now).replace(":", ""))])
+    location = os.path.sep.join(["shots", "shot_{}.png".format(str(now).replace(":", "").replace(' ',''))])
     my_photo = PhotoModel(
-        store_location=p, name=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+        store_location=location, name=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
     )
     db.session.add(my_photo)
     db.session.commit()
@@ -116,7 +116,7 @@ def gen_frames():  # generate frame by frame from camera
     face_cascade = cv2.CascadeClassifier(
         cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
     )
-    video_capture = cv2.VideoCapture(0)
+    video_capture = cv2.VideoCapture(-1)
     # cv2.VideoCapture(addres)
     global out, capture, rec_frame, picture_name
     while True:
@@ -136,11 +136,11 @@ def gen_frames():  # generate frame by frame from camera
             )
             if capture:
                 now = datetime.datetime.now()
-                p = os.path.sep.join(
-                    ["shots", "shot_{}.png".format(str(now).replace(":", ""))]
+                # fix this get varialble for store
+                picture_name = os.path.sep.join(
+                    ["shots", "shot_{}.png".format(str(now).replace(":", "").replace(" ", ""))]
                 )
-                picture_name = p
-                cv2.imwrite(p, frame)
+                cv2.imwrite(picture_name, frame)
                 capture = 0
             if rec:
                 rec_frame = frame
@@ -208,7 +208,11 @@ def photo_list():
 def remove_photo_by_id(id):
     employee = PhotoModel.query.filter_by(id=id).first()
     if employee:
-        os.system(f"rm {employee.store_location}")
+        command = f"{os.getcwd() + '/'  + employee.store_location}"
+        try:
+            os.remove(command)
+        except:
+            pass
         db.session.delete(employee)
         db.session.commit()
     return redirect("/photo_list")
