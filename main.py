@@ -5,10 +5,10 @@ from threading import Thread
 
 from flask import render_template, request, redirect, url_for, Response
 from flask_migrate import Migrate
-from models import db, EmployeeModel, PhotoModel
+from models import db, EmployeeModel, PhotoModel, PictureForSave
 import cv2
 from const import (
-    make_camera_flask_app,
+    make_camera_flask_app, my_tiny_log_decorator
 )
 from writer import RefreshSaver
 
@@ -25,18 +25,34 @@ switch = 1
 rec = 0
 
 
-def make_list_task_before_execution():
-    """ """
 
-
-def store_photo():
+@my_tiny_log_decorator
+def get_current_picture_name():
+    # update to session with json
     now = datetime.datetime.now()
     location = os.path.sep.join(["shots", "shot_{}.png".format(str(now).replace(":", "").replace(' ',''))])
-    my_photo = PhotoModel(
+    pic = PictureForSave(
         store_location=location, name=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+    )
+    db.session.add(pic)
+    db.session.commit()
+    return location
+
+def store_photo():
+    pic_location = get_current_picture_name()
+    my_photo = PhotoModel(
+        store_location=pic_location, name=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
     )
     db.session.add(my_photo)
     db.session.commit()
+
+def get_first_and_delete():
+    for_store = PictureForSave.query.all().first()
+    cur_loc = for_store.store_location
+    db.session.delete(for_store)
+    db.session.commit()
+    return cur_loc
+
 
 
 @app.route("/", methods=["POST", "GET"])
@@ -135,18 +151,15 @@ def gen_frames():  # generate frame by frame from camera
                 flags=cv2.CASCADE_SCALE_IMAGE,
             )
             if capture:
-                now = datetime.datetime.now()
-                # fix this get varialble for store
-                picture_name = os.path.sep.join(
-                    ["shots", "shot_{}.png".format(str(now).replace(":", "").replace(" ", ""))]
-                )
+
+                picture_name = get_first_and_delete()
                 cv2.imwrite(picture_name, frame)
                 capture = 0
             if rec:
                 rec_frame = frame
                 frame = cv2.putText(
                     cv2.flip(frame, 1),
-                    "Recording...",
+                    "Recording ",
                     (0, 25),
                     cv2.FONT_HERSHEY_SIMPLEX,
                     1,
