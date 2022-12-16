@@ -47,7 +47,7 @@ def store_photo():
     db.session.commit()
 
 def get_first_and_delete():
-    for_store = PictureForSave.query.all().first()
+    for_store = PictureForSave.query.all()
     cur_loc = for_store.store_location
     db.session.delete(for_store)
     db.session.commit()
