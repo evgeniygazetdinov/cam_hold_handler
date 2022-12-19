@@ -7,9 +7,7 @@ from flask import render_template, request, redirect, url_for, Response
 from flask_migrate import Migrate
 from models import db, EmployeeModel, PhotoModel, PictureForSave
 import cv2
-from const import (
-    make_camera_flask_app, my_tiny_log_decorator
-)
+from const import make_camera_flask_app, my_tiny_log_decorator
 from writer import RefreshSaver
 
 refresh = RefreshSaver()
@@ -25,26 +23,31 @@ switch = 1
 rec = 0
 
 
-
 @my_tiny_log_decorator
 def get_current_picture_name():
     # update to session with json
     now = datetime.datetime.now()
-    location = os.path.sep.join(["shots", "shot_{}.png".format(str(now).replace(":", "").replace(' ',''))])
+    location = os.path.sep.join(
+        ["shots", "shot_{}.png".format(str(now).replace(":", "").replace(" ", ""))]
+    )
     pic = PictureForSave(
-        store_location=location, name=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+        store_location=location,
+        name=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
     )
     db.session.add(pic)
     db.session.commit()
     return location
 
+
 def store_photo():
     pic_location = get_current_picture_name()
     my_photo = PhotoModel(
-        store_location=pic_location, name=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+        store_location=pic_location,
+        name=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
     )
     db.session.add(my_photo)
     db.session.commit()
+
 
 def get_first_and_delete():
     for_store = PictureForSave.query.all()
@@ -52,7 +55,6 @@ def get_first_and_delete():
     db.session.delete(for_store)
     db.session.commit()
     return cur_loc
-
 
 
 @app.route("/", methods=["POST", "GET"])
