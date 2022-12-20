@@ -1,6 +1,7 @@
 .vscode/
 .idea/
 env/
+session/
 __pycache__
 corrector/
 instance/
