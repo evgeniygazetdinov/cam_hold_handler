@@ -9,8 +9,10 @@ from models import db, EmployeeModel, PhotoModel, PictureForSave
 import cv2
 from const import make_camera_flask_app, my_tiny_log_decorator
 from writer import RefreshSaver
+from session import Session
 
 refresh = RefreshSaver()
+session = Session()
 app = make_camera_flask_app()
 db.init_app(app)
 migrate = Migrate(app, db)
@@ -30,12 +32,7 @@ def get_current_picture_name():
     location = os.path.sep.join(
         ["shots", "shot_{}.png".format(str(now).replace(":", "").replace(" ", ""))]
     )
-    pic = PictureForSave(
-        store_location=location,
-        name=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
-    )
-    db.session.add(pic)
-    db.session.commit()
+    session.store_photo(location)
     return location
 
 
