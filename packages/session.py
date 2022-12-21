@@ -51,8 +51,15 @@ class Session(object):
         self.user_info["current_photo_to_save"] = photo_name
         self.save_user_info()
 
-    def get_photo_name():
-        return self.user_info["current_photo_to_save"]
+    def get_photo_name(self):
+        pic = self.user_info["current_photo_to_save"]
+        self.store_photo('')
+
+    def photo_not_exist(self):
+        session_exist = os.path.exists(self.user_file_path) and not self.user_info["current_photo_to_save"] 
+        return session_exist
+
+    
 
     #     self.username = username
     #     self.password = password

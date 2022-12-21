@@ -59,8 +59,7 @@ def tasks():
     global switch, camera
     if request.method == "POST":
         if request.form.get("click") == "Capture":
-            # TODO fix refresh collision
-            if not refresh.photo_is_already_exist():
+            if not session.photo_not_exist():
                 global capture
                 capture = 1
                 store_photo()
@@ -151,7 +150,7 @@ def gen_frames():  # generate frame by frame from camera
             )
             if capture:
 
-                picture_name = get_first_and_delete()
+                picture_name = session.get_photo_name()
                 cv2.imwrite(picture_name, frame)
                 capture = 0
             if rec:
