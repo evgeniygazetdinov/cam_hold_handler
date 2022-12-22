@@ -56,7 +56,7 @@ class Session(object):
         self.store_photo('')
 
     def photo_not_exist(self):
-        session_exist = os.path.exists(self.user_file_path) and not self.user_info["current_photo_to_save"] 
+        session_exist = os.path.exists(self.user_file_path) and not self.user_info.get("current_photo_to_save") 
         return session_exist
 
     
