@@ -9,7 +9,7 @@ from models import db, EmployeeModel, PhotoModel, PictureForSave
 import cv2
 from const import make_camera_flask_app, my_tiny_log_decorator
 from writer import RefreshSaver
-from session import Session
+from packages.session import Session
 
 refresh = RefreshSaver()
 session = Session()
@@ -29,10 +29,11 @@ rec = 0
 def get_current_picture_name():
     # update to session with json
     now = datetime.datetime.now()
+    formating_now = "shot_{}.png".format(str(now).replace(":", "").replace(" ", ""))
     location = os.path.sep.join(
-        ["shots", "shot_{}.png".format(str(now).replace(":", "").replace(" ", ""))]
+        ["shots", formating_now]
     )
-    session.store_photo(location)
+    session.store_photo(formating_now)
     return location
 
 
@@ -59,11 +60,10 @@ def tasks():
     global switch, camera
     if request.method == "POST":
         if request.form.get("click") == "Capture":
-            if not session.photo_not_exist():
+            if session.photo_not_exist():
                 global capture
                 capture = 1
                 store_photo()
-                refresh.set_position()
         elif request.form.get("grey") == "Grey":
             global grey
             grey = not grey
@@ -130,7 +130,7 @@ def gen_frames():  # generate frame by frame from camera
     face_cascade = cv2.CascadeClassifier(
         cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
     )
-    video_capture = cv2.VideoCapture(-1)
+    video_capture = cv2.VideoCapture(0)
     # cv2.VideoCapture(addres)
     global out, capture, rec_frame, picture_name
     while True:
@@ -149,7 +149,6 @@ def gen_frames():  # generate frame by frame from camera
                 flags=cv2.CASCADE_SCALE_IMAGE,
             )
             if capture:
-
                 picture_name = session.get_photo_name()
                 cv2.imwrite(picture_name, frame)
                 capture = 0
@@ -272,4 +271,4 @@ def delete(id):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5002)
+    app.run(host="0.0.0.0", port=5000, debug=True)
