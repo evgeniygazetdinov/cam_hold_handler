@@ -30,9 +30,7 @@ def get_current_picture_name():
     # update to session with json
     now = datetime.datetime.now()
     formating_now = "shot_{}.png".format(str(now).replace(":", "").replace(" ", ""))
-    location = os.path.sep.join(
-        ["shots", formating_now]
-    )
+    location = os.path.sep.join(["shots", formating_now])
     session.store_photo(formating_now)
     return location
 
