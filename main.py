@@ -36,7 +36,7 @@ def get_current_picture_name():
 
 
 def store_photo():
-    pic_location = get_current_picture_name()
+    pic_location = session.get_photo_name()
     my_photo = PhotoModel(
         store_location=pic_location,
         name=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"),
@@ -148,7 +148,8 @@ def gen_frames():  # generate frame by frame from camera
             )
             if capture:
                 picture_name = session.get_photo_name()
-                cv2.imwrite(picture_name, frame)
+                if picture_name:
+                    cv2.imwrite(picture_name, frame)
                 capture = 0
             if rec:
                 rec_frame = frame
