@@ -11,7 +11,8 @@ import os
 
 
 cam = None
-html_page_path = dir_path = os.path.dirname(os.path.realpath(__file__)) + '/www/'
+TEMPL_DIR = 'static/www/'
+html_page_path = dir_path = os.path.dirname(os.path.realpath(__file__)) + '/' + TEMPL_DIR
 
 
 class HtmlPageHandler(tornado.web.RequestHandler):
@@ -21,7 +22,7 @@ class HtmlPageHandler(tornado.web.RequestHandler):
         index_page = os.path.join(html_page_path, file_name)
         if os.path.exists(index_page):
             # Render it
-            self.render('www/' + file_name)
+            self.render(TEMPL_DIR + file_name)
         else:
             # Page not found, generate template
             err_tmpl = tornado.template.Template("<html> Err 404, Page {{ name }} not found</html>")
@@ -107,4 +108,5 @@ if __name__ == "__main__":
     # bind server on 8080 port
     app = make_app()
     app.listen(9090)
+    print('RUN http://127.0.0.1:9090')
     tornado.ioloop.IOLoop.current().start()
