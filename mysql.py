@@ -74,11 +74,11 @@ class FormHandler(tornado.web.RequestHandler):
 # map the Urls to the class          
 application = tornado.web.Application([
     (r"/", ListMessagesHandler),
-    # (r"/form/", FormHandler),
+    (r"/form/", FormHandler),
 ])
 
 # Start the server
 if __name__ == "__main__":
     http_server = tornado.httpserver.HTTPServer(application)
-    http_server.listen(8889)
+    http_server.listen(8888)
     tornado.ioloop.IOLoop.instance().start()
