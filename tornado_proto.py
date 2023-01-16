@@ -15,8 +15,16 @@ cur = conn.cursor()
 class MainHandler(tweb.RequestHandler):
 
     def get(self):
-        self.render('index3.html')
+        cur.execute(
+        """
+        SELECT name, email from contact;
+        """,)
 
+        ans =cur.fetchall()
+        dict_result = []
+        for row in ans:
+            dict_result.append(dict(row))
+        self.write(dict_result)
 
 class AboutHandler(tweb.RequestHandler):
 

@@ -1,0 +1,1 @@
+create table contact( id serial primary key,name varchar(10), email varchar(10), message varchar(10), created_on TIMESTAMP not null );
