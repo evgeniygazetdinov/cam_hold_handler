@@ -20,11 +20,11 @@ class MainHandler(tweb.RequestHandler):
         SELECT name, email from contact;
         """,)
 
-        ans =cur.fetchall()
-        dict_result = []
-        for row in ans:
-            dict_result.append(dict(row))
-        self.write(dict_result)
+        contacts = cur.fetchall()
+        
+        self.render('contacts.html', contacts=contacts) 
+
+
 
 class AboutHandler(tweb.RequestHandler):
 
