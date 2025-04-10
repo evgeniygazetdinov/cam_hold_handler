@@ -1,13 +1,23 @@
-.vscode/
-.vs/
-.idea/
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
 env/
-session/
-__pycache__
-corrector/
-instance/
-shots/
-real-time-object-detection/env/
-*.avi
-*.txt
-*.db
+venv/
+.env
+
+# IDE
+.idea/
+.vscode/
+
+# Docker
+.docker/
+postgres_data/
+
+# Alembic
+migrations/versions/__pycache__/
+migrations/__pycache__/
+
+barcodes.xlsx

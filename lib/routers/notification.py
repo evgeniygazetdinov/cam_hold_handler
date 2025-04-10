@@ -46,5 +46,3 @@ async def generate_labels(file: UploadFile = File(...)):
         os.remove(img)
 
     return FileResponse(pdf_path)
-
-
